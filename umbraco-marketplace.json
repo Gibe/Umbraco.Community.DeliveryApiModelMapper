@@ -1,0 +1,14 @@
+{
+    "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json", 
+    "AuthorDetails": {
+      "Name": "Tristan Thompson",
+      "ImageUrl": "https://github.com/Gibe.png"
+    },
+    "Category": "",
+    "Description": "",
+    "LicenseTypes": [ "Free" ],
+    "IssueTrackerUrl": "https://github.com/Gibe/Umbraco.Community.DeliveryApiModelMapper/issues",
+    "PackageType": "Package",
+    "Tags": [],
+    "Title": "Delivery API Model Mapper"
+  }
