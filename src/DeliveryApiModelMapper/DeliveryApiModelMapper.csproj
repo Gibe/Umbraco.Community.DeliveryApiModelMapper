@@ -23,8 +23,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
+    <!-- min 13.3.0 so that we can extend ApiContentResponseBuilder -->
+    <PackageReference Include="Umbraco.Cms.Core" Version="13.3.0" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="13.3.0" />
+    <PackageReference Include="Umbraco.Cms.Api.Delivery" Version="13.3.0" />
   </ItemGroup>
 
   <ItemGroup>
