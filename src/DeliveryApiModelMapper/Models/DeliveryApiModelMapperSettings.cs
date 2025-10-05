@@ -4,6 +4,6 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Models
 {
 	public class DeliveryApiModelMapperSettings
 	{
-		public ModelMode ModelMode { get; set; }
+		public ModelMode ModelMode { get; set; } = ModelMode.Everything;
 	}
 }
