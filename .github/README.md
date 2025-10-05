@@ -4,15 +4,97 @@
 [![NuGet](https://img.shields.io/nuget/vpre/Umbraco.Community.DeliveryApiModelMapper?color=0273B3)](https://www.nuget.org/packages/Umbraco.Community.DeliveryApiModelMapper)
 [![GitHub license](https://img.shields.io/github/license/tristanjthompson/Umbraco.Community.DeliveryApiModelMapper?color=8AB803)](../LICENSE)
 
-TODO: describe your package
+This package allows you to create custom models which will get ouput in the Delivery API response as a custom `"model"` property.
 
-<!--
-Including screenshots is a really good idea! 
+e.g.
 
-If you put images into /docs/screenshots, then you would reference them in this readme as, for example:
+Instead of this original Umbraco Delivery API response:
+```json
+{
+	"contentType": "home",
+	"name": "Home",
+	"createDate": "2025-09-30T17:05:04.6009112",
+	"updateDate": "2025-10-05T09:55:35.0150656",
+	"route": {
+		"path": "/",
+		"startItem": {
+			"id": "a086db43-c507-4be6-aadf-dc734abdea45",
+			"path": "home"
+		}
+	},
+	"id": "a086db43-c507-4be6-aadf-dc734abdea45",
+	"properties": {
+		"contentTitle": "Welcome to the site",
+		"contentText": {
+			"markup": "<p>This is some lovely text</p>",
+			"blocks": []
+		},
+		"seoMetaTitle": "Home page | My lovely site",
+		"seoMetaDescription": "This is a lovely site, please rank it higher",
+		"seoMetaImage": [
+			{
+				"focalPoint": null,
+				"crops": [],
+				"id": "4585ad94-0c21-4ae7-a621-504679a449a1",
+				"name": "Enceladus PIA08409 Full",
+				"mediaType": "Image",
+				"url": "/media/skwjkrjb/enceladus_pia08409_full.jpg",
+				"extension": "jpg",
+				"width": 3380,
+				"height": 2211,
+				"bytes": 665148,
+				"properties": {}
+			}
+		],
+	},
+	"cultures": {}
+}
+```
 
-<img alt="..." src="https://github.com/tristanjthompson/Umbraco.Community.DeliveryApiModelMapper/blob/develop/docs/screenshots/screenshot.png">
--->
+...you could return this...
+
+```json
+{
+	"contentType": "home",
+	"name": "Home",
+	"createDate": "2025-09-30T17:05:04.6009112",
+	"updateDate": "2025-10-05T09:55:35.0150656",
+	"route": {
+		"path": "/",
+		"startItem": {
+			"id": "a086db43-c507-4be6-aadf-dc734abdea45",
+			"path": "home"
+		}
+	},
+	"id": "a086db43-c507-4be6-aadf-dc734abdea45",
+	"model": {
+		"title": "Welcome to the site",
+		"text": "<p>This is some lovely text</p>",
+		"metaTitle": "Home page | My lovely site",
+		"metaDescription": "This is a lovely site, please rank it higher",
+		"metaImageUrl": "/media/skwjkrjb/enceladus_pia08409_full.jpg?width=1200",
+		"lastUpdated": "2025-10-05T09:55:35.0150656",
+		"url": "/",
+	},
+	"cultures": {}
+}
+```
+
+... or even this...
+
+```json
+{
+	"model": {
+		"title": "Welcome to the site",
+		"text": "<p>This is some lovely text</p>",
+		"metaTitle": "Home page | My lovely site",
+		"metaDescription": "This is a lovely site, please rank it higher",
+		"metaImageUrl": "/media/skwjkrjb/enceladus_pia08409_full.jpg?width=1200",
+		"lastUpdated": "2025-10-05T09:55:35.0150656",
+		"url": "/",
+	}
+}
+```
 
 ## Installation
 
@@ -20,7 +102,86 @@ Add the package to an existing Umbraco website (v13+) from nuget:
 
 `dotnet add package Umbraco.Community.DeliveryApiModelMapper`
 
-TODO *provide any other instructions for someone using your package*
+## Mapping
+### Defining mappings
+You define a mapping by implementing the `IDeliveryApiModelMapper` interface. This can be found in the `Umbraco.Community.DeliveryApiModelMapper.Interfaces` namespace.  Multiple mappings can be defined.
+
+The `IDeliveryApiModelMapper` interface has two methods:
+1. `bool CanMapModel(IPublishedContent content, ...)` - this is used to say whether this mapper should be used for a particular piece of content.
+2. `object MapModel(IPublishedContent content, ...)` - this is where you create your custom mapping.
+
+e.g. to create a custom mapping for home page content to a `HomeModel` you would implement the following:
+```csharp
+public class HomeModelMapper : IDeliveryApiModelMapper
+{
+	public bool CanMapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures)
+		=> content.ContentType.Alias == "homePage";
+
+	public object MapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures)
+	{
+		return new HomeModel
+		{
+			Title = content.Value<string>("contentTitle"),
+			Text = content.Value<string>("contentText")
+		};
+	}
+}
+```
+
+### Registering mappings
+Once you've created your mappings, you need to register them in an `IComposer`.
+
+e.g.
+```csharp
+builder.Services.AddScoped<IDeliveryApiModelMapper, HomeModelMapper>();
+```
+
+If you have more than one mapping, you simply register them all individually.  Note - the order they are registered is the order they are checked.
+
+e.g.
+```csharp
+builder.Services.AddScoped<IDeliveryApiModelMapper, HomeModelMapper>();
+builder.Services.AddScoped<IDeliveryApiModelMapper, AboutUsModelMapper>();
+builder.Services.AddScoped<IDeliveryApiModelMapper, ContentPageModelMapper>();
+```
+
+### Configuring the output
+
+If no `IDeliveryApiModelMapper` is found for a piece of content being returned by the Delivery API then the original Umbraco Delivery API response is returned without any changes.
+
+However, if a mapper is found, then the response is modified according to the configured "ModelMode".  
+
+#### Model Modes
+There are 4 "ModelMode" values that can be configured:
+
+- `Everything` (default) - appends the custom `"model"` property to the original Delivery API response.
+- `ExcludeProperties` - removes the original `"properties"` property and swaps it for the custom `"model"` property.
+- `ModelOnly` - only outputs the custom `"model"` property in the response.
+- `ExcludeModel` - returns the original Delivery API response.
+
+For more details on model modes, see the [Model Modes documentation](./model-modes.md).
+
+#### Choosing a ModelMode
+
+A default "ModelMode" is set in the `appsettings.json`.  This will apply to all Delivery API requests that have a matching `IDeliveryApiModelMapper` interface implemented.
+
+```json
+{
+	"Umbraco": {
+		"CMS": {
+			"DeliveryApiModelMapper": {
+				"ModelMode": "Everything"
+			}
+		}
+	}
+}
+```
+
+The default ModelMode can be overidden by adding a `?modelmode=[ModelMode]` querystring parameter to your Delivery API call.
+
+e.g. if you have configured the default ModelMode in your `appsettings.json` to `Everything` then...
+* ...a call to `/umbraco/delivery/api/v2/content/item` will return `Everything`
+* ...a call to `/umbraco/delivery/api/v2/content/item?modelmode=ModelOnly` will return `ModelOnly`
 
 ## Contributing
 
@@ -28,4 +189,4 @@ Contributions to this package are most welcome! Please read the [Contributing Gu
 
 ## Acknowledgments
 
-TODO
+[tristanjthompson](https://github.com/tristanjthompson)

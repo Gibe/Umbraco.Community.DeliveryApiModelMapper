@@ -2,9 +2,9 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Enums
 {
 	public enum ModelMode
 	{
-		ModelOnly,
+		Everything,
 		ExcludeProperties,
+		ModelOnly,
 		ExcludeModel,
-		Everything
 	}
 }
