@@ -8,14 +8,14 @@ using Umbraco.Community.DeliveryApiModelMapper.Models;
 
 namespace Umbraco.Community.DeliveryApiModelMapper.Services;
 
-public class ModelMapperService : IDeliveryApiModelMapperService
+public class DeliveryApiModelMapperService : IDeliveryApiModelMapperService
 {
 	private readonly IEnumerable<IDeliveryApiModelMapper> _mappers;
-	private readonly ModelMapperSettings _settings;
+	private readonly DeliveryApiModelMapperSettings _settings;
 	private readonly IHttpContextAccessor _httpContextAccessor;
 
-	public ModelMapperService(IEnumerable<IDeliveryApiModelMapper> mappers,
-		IOptions<ModelMapperSettings> settings,
+	public DeliveryApiModelMapperService(IEnumerable<IDeliveryApiModelMapper> mappers,
+		IOptions<DeliveryApiModelMapperSettings> settings,
 		IHttpContextAccessor httpContextAccessor)
 	{
 		_mappers = mappers.ToArray();
@@ -30,24 +30,24 @@ public class ModelMapperService : IDeliveryApiModelMapperService
 
 	public IApiContentResponse CreateApiResponse(object model, IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, object?> properties, IDictionary<string, IApiContentRoute> cultures)
 	{
-		switch (GetModelMode())
+		switch (ModelMode())
 		{
-			case ModelMode.ExcludeModel:
-				return new ModelMapperApiContentResponse(content, name, route, properties, cultures);
+			case Enums.ModelMode.ExcludeModel:
+				return new DeliveryApiModelMapperApiContentResponse(content, name, route, properties, cultures);
 
-			case ModelMode.ExcludeProperties:
-				return new ModelMapperApiContentResponse(model, content, name, route, default, cultures);
+			case Enums.ModelMode.ExcludeProperties:
+				return new DeliveryApiModelMapperApiContentResponse(model, content, name, route, default, cultures);
 
-			case ModelMode.ModelOnly:
-				return new ModelMapperApiContentResponse(model);
+			case Enums.ModelMode.ModelOnly:
+				return new DeliveryApiModelMapperApiContentResponse(model);
 
 			default:
-			case ModelMode.Everything:
-				return new ModelMapperApiContentResponse(model, content, name, route, properties, cultures);
+			case Enums.ModelMode.Everything:
+				return new DeliveryApiModelMapperApiContentResponse(model, content, name, route, properties, cultures);
 		}
 	}
 
-	private ModelMode GetModelMode()
+	private ModelMode ModelMode()
 	{
 		var httpContext = _httpContextAccessor.HttpContext;
 		if (httpContext != null)

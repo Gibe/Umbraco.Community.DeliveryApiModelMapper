@@ -4,7 +4,7 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace Umbraco.Community.DeliveryApiModelMapper.Services;
 
-public class ModelMapperApiContentResponse : ApiContentResponse, IApiContentResponse
+public class DeliveryApiModelMapperApiContentResponse : ApiContentResponse, IApiContentResponse
 {
 	[JsonPropertyOrder(-100)]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -35,14 +35,14 @@ public class ModelMapperApiContentResponse : ApiContentResponse, IApiContentResp
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public IDictionary<string, IApiContentRoute> Cultures => base.Cultures;
 
-	public ModelMapperApiContentResponse(
+	public DeliveryApiModelMapperApiContentResponse(
 		object model)
 		: base(default, default, default, default, default, default, default, default)
 	{
 		Model = model;
 	}
 
-	public ModelMapperApiContentResponse(
+	public DeliveryApiModelMapperApiContentResponse(
 		IPublishedContent content,
 		string name,
 		IApiContentRoute route,
@@ -53,7 +53,7 @@ public class ModelMapperApiContentResponse : ApiContentResponse, IApiContentResp
 		Model = default;
 	}
 
-	public ModelMapperApiContentResponse(
+	public DeliveryApiModelMapperApiContentResponse(
 		object model,
 		IPublishedContent content,
 		string name,

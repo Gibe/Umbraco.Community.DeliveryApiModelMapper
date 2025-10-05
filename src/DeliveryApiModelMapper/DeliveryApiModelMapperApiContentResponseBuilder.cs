@@ -6,11 +6,11 @@ using Umbraco.Community.DeliveryApiModelMapper.Interfaces;
 
 namespace Umbraco.Community.DeliveryApiModelMapper;
 
-public class ModelMapperApiContentResponseBuilder : ApiContentResponseBuilder
+public class DeliveryApiModelMapperApiContentResponseBuilder : ApiContentResponseBuilder
 {
 	private readonly IDeliveryApiModelMapperService _modelMapperService;
 
-	public ModelMapperApiContentResponseBuilder(
+	public DeliveryApiModelMapperApiContentResponseBuilder(
 			IApiContentNameProvider apiContentNameProvider,
 			IApiContentRouteBuilder apiContentRouteBuilder,
 			IOutputExpansionStrategyAccessor outputExpansionStrategyAccessor,

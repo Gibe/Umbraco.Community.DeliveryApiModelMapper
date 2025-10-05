@@ -15,9 +15,9 @@ namespace Umbraco.Community.DeliveryApiModelMapper
 	{
 		public void Compose(IUmbracoBuilder builder)
 		{
-			builder.Services.AddScoped<IDeliveryApiModelMapperService, ModelMapperService>();
+			builder.Services.AddScoped<IDeliveryApiModelMapperService, DeliveryApiModelMapperService>();
 
-			builder.Services.AddScoped<IApiContentResponseBuilder, ModelMapperApiContentResponseBuilder>();
+			builder.Services.AddScoped<IApiContentResponseBuilder, DeliveryApiModelMapperApiContentResponseBuilder>();
 
 			builder.Services
 					.AddControllers()
@@ -25,10 +25,10 @@ namespace Umbraco.Community.DeliveryApiModelMapper
 						Constants.JsonOptionsNames.DeliveryApi,
 						options => options
 							.JsonSerializerOptions
-							.TypeInfoResolver = new ModelMapperDeliveryApiJsonTypeResolver()
+							.TypeInfoResolver = new DeliveryApiModelMapperDeliveryApiJsonTypeResolver()
 					);
 
-			builder.Services.AddOptions<ModelMapperSettings>()
+			builder.Services.AddOptions<DeliveryApiModelMapperSettings>()
 				.BindConfiguration("Umbraco:CMS:DeliveryApiModelMapper")
 				.ValidateOnStart();
 		}

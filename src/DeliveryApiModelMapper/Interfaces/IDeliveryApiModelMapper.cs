@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Models.DeliveryApi;
 using Umbraco.Cms.Core.Models.PublishedContent;
 

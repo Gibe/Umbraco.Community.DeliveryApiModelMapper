@@ -5,14 +5,14 @@ using Umbraco.Community.DeliveryApiModelMapper.Services;
 
 namespace Umbraco.Community.DeliveryApiModelMapper.Serialization;
 
-public class ModelMapperDeliveryApiJsonTypeResolver : DeliveryApiJsonTypeResolver
+public class DeliveryApiModelMapperDeliveryApiJsonTypeResolver : DeliveryApiJsonTypeResolver
 {
 	protected override Type[] GetDerivedTypes(JsonTypeInfo jsonTypeInfo)
 	{
 		if (jsonTypeInfo.Type == typeof(IApiContentResponse))
 		{
 			return base.GetDerivedTypes(jsonTypeInfo)
-				.Concat([typeof(ModelMapperApiContentResponse)])
+				.Concat([typeof(DeliveryApiModelMapperApiContentResponse)])
 				.ToArray();
 		}
 
