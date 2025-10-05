@@ -1,14 +1,16 @@
 {
-    "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json", 
-    "AuthorDetails": {
-      "Name": "Tristan Thompson",
-      "ImageUrl": "https://github.com/Gibe.png"
-    },
-    "Category": "",
-    "Description": "",
-    "LicenseTypes": [ "Free" ],
-    "IssueTrackerUrl": "https://github.com/Gibe/Umbraco.Community.DeliveryApiModelMapper/issues",
-    "PackageType": "Package",
-    "Tags": [],
-    "Title": "Delivery API Model Mapper"
-  }
+	"$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+	"AuthorDetails": {
+		"Name": "Gibe Digital",
+		"Url": "https://github.com/Gibe/Umbraco.Community.DeliveryApiModelMapper",
+		"ImageUrl": "https://github.com/Gibe.png",
+		"SyncContributorsFromRepository": true
+	},
+	"Category": "Headless",
+	"Description": "This package allows you to create custom models which will get ouput in the Delivery API response as a custom \"model\" property.",
+	"LicenseTypes": [ "Free" ],
+	"IssueTrackerUrl": "https://github.com/Gibe/Umbraco.Community.DeliveryApiModelMapper/issues",
+	"PackageType": "Package",
+	"Tags": [],
+	"Title": "Delivery API Model Mapper"
+}
