@@ -1,18 +1,23 @@
 using System.Text.Json;
-using Umbraco.Community.DeliveryApiModelMapper.Settings;
 using Azure.Identity;
 using Azure.Monitor.Query.Logs;
+using Azure.Monitor.Query.Logs.Models;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Serilog.Events;
 using StackExchange.Profiling.Internal;
 using Umbraco.Cms.Core.Logging.Viewer;
-using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Logging.Serilog;
-using LogLevel = Umbraco.Cms.Core.Logging.LogLevel;
+using Umbraco.Community.DeliveryApiModelMapper.Settings;
 
 namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 {
+	public interface ILogViewerRepository
+	{
+		Task<IEnumerable<RequestEntry>> GetLogsAsync(LogTimePeriod logTimePeriod, string? filterExpression = null);
+		Task<IEnumerable<ReportEntry>> GetReportAsync(LogTimePeriod logTimePeriod);
+	}
+
+
 	public class ApplicationInsightsLogViewerRepository : ILogViewerRepository
 	{
 		private readonly UmbracoFileConfiguration _umbracoFileConfig;
@@ -25,122 +30,115 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 		}
 
 		/// <inheritdoc />
-		public IEnumerable<ILogEntry> GetLogs(LogTimePeriod logTimePeriod, string? filterExpression = null)
+		public async Task<IEnumerable<RequestEntry>> GetLogsAsync(LogTimePeriod logTimePeriod, string? filterExpression = null)
 		{
 			try
 			{
-				return GetRemoteLogs(logTimePeriod, filterExpression).Result;
+				var table = await GetRemoteLogsAsync(logTimePeriod, filterExpression);
+
+				return table.Rows.Select(x => new RequestEntry
+				{
+					Id = x.GetString("Id"),
+					TimeStamp = x.GetDateTimeOffset("TimeGenerated").GetValueOrDefault(),
+					Name = x.GetString("Name"),
+					Url = x.GetString("Url"),
+					Success = x.GetBoolean("Success") ?? false,
+					Duration = x.GetDouble("DurationMs") ?? -1,
+					PerformanceBucket = x.GetString("PerformanceBucket"),
+					ResultCode = x.GetString("ResultCode"),
+					Properties = Properties(x.GetString("Properties"))
+				}).ToList();
+
+				static Dictionary<string, string?> Properties(string properties)
+				{
+					if (string.IsNullOrWhiteSpace(properties))
+					{
+						return new Dictionary<string, string?>();
+					}
+
+					return JsonSerializer.Deserialize<Dictionary<string, string?>>(properties) ?? new Dictionary<string, string?>();
+				}
 
 			}
 			catch (Exception e)
 			{
 				Log.Error(e, "Error getting logs from Application Insights");
-				return Enumerable.Empty<ILogEntry>();
+				return Enumerable.Empty<RequestEntry>();
 			}
 		}
 
-		/// <inheritdoc />
-		public LogLevelCounts GetLogCount(LogTimePeriod logTimePeriod)
+		public async Task<IEnumerable<ReportEntry>> GetReportAsync(LogTimePeriod logTimePeriod)
 		{
-			var logs = GetRemoteLogs(logTimePeriod).Result;
-			var groups = logs.GroupBy(x => x.Level).Select(l => new
+			try
 			{
-				l.Key,
-				Count = l.Count()
 
-			});
+				var filterExpression = " | where Properties['IsDeliveryApi'] == 'True' " 
+					+ " | summarize AverageDurationMs = avg(DurationMs), Count = count() by Url"
+					+ " | order by Count desc";
 
-			return new LogLevelCounts
+				var table = await GetRemoteLogsAsync(logTimePeriod, filterExpression);
+
+				return table.Rows.Select(x => new ReportEntry
+				{
+					Url = x.GetString("Url"),
+					AverageDurationMs = x.GetDouble("AverageDurationMs") ?? -1,
+					Count = x.GetInt64("Count").GetValueOrDefault()
+				}).ToList();
+
+
+				string Url(LogsTableRow row)
+				{
+					var url = row.GetString("Url");
+					if (string.IsNullOrWhiteSpace(url))
+					{
+						return url;
+					};
+
+					return url.StartsWith("https://") || url.StartsWith("http://")
+						? new Uri(url).PathAndQuery : url;
+				}
+			}
+			catch (Exception e)
 			{
-				Debug = groups.SingleOrDefault(x => x.Key == LogLevel.Debug) == null ? 0 : groups.SingleOrDefault(x => x.Key == LogLevel.Debug).Count,
-				Information = groups.SingleOrDefault(x => x.Key == LogLevel.Information) == null ? 0 : groups.SingleOrDefault(x => x.Key == LogLevel.Information).Count,
-				Warning = groups.SingleOrDefault(x => x.Key == LogLevel.Warning) == null ? 0 : groups.SingleOrDefault(x => x.Key == LogLevel.Warning).Count,
-				Error = groups.SingleOrDefault(x => x.Key == LogLevel.Error) == null ? 0 : groups.SingleOrDefault(x => x.Key == LogLevel.Error).Count,
-				Fatal = groups.SingleOrDefault(x => x.Key == LogLevel.Fatal) == null ? 0 : groups.SingleOrDefault(x => x.Key == LogLevel.Fatal).Count
-			};
+				Log.Error(e, "Error getting logs from Application Insights");
+				return Enumerable.Empty<ReportEntry>();
+			}
 		}
 
-		/// <inheritdoc />
-		public LogTemplate[] GetMessageTemplates(LogTimePeriod logTimePeriod)
+		private async Task<LogsTable> GetRemoteLogsAsync(LogTimePeriod logTimePeriod, string? query = null)
 		{
-			/* TODO - Reimplement - Do we need this?  
-			var messageTemplates = new MessageTemplateFilter();
-
-			GetLogs(logTimePeriod, messageTemplates);
-
-			return messageTemplates.Counts
-					.Select(x => new LogTemplate { MessageTemplate = x.Key, Count = x.Value })
-					.OrderByDescending(x => x.Count).ToArray();
-			*/
-			return Enumerable.Empty<LogTemplate>().ToArray();
-		}
-
-		/// <inheritdoc />
-		public LogLevel GetGlobalMinLogLevel() // TODO : Application Insights Sink Config
-		{
-			LogEventLevel logLevel = GetGlobalLogLevelEventMinLevel();
-
-			return Enum.Parse<LogLevel>(logLevel.ToString());
-		}
-
-		public LogLevel RestrictedToMinimumLevel()
-		{
-			LogEventLevel minLevel = _umbracoFileConfig.RestrictedToMinimumLevel;
-			return Enum.Parse<LogLevel>(minLevel.ToString());
-		}
-
-		private LogEventLevel GetGlobalLogLevelEventMinLevel() =>
-				Enum.GetValues(typeof(LogEventLevel))
-						.Cast<LogEventLevel>()
-						.Where(Log.IsEnabled)
-						.DefaultIfEmpty(LogEventLevel.Information)
-						.Min();
-
-		private async Task<IEnumerable<ILogEntry>> GetRemoteLogs(LogTimePeriod logTimePeriod, string? query = null)
-		{
-			var aiQuery = "AppTraces";
+			var aiQuery = "AppRequests";
 			if (query.HasValue())
 			{
-				// TODO a bit nicer
-				// If query is just a single word, search the message for it
-				if (query.Contains(" "))
-				{
-					aiQuery += $" | where {query.Replace("\"", "'")}";
-				}
-				else
-				{
-					aiQuery += $" | where Message contains '{query}'";
-				}
-
+				aiQuery += $" {query}";
 			}
 
 			var client = new LogsQueryClient(new DefaultAzureCredential()); // TODO : proper auth - new ClientSecretCredential(_options.TenantId, _options.ClientId, _options.ClientSecret)); TODO : This isn't getting correct permission
 			var result = await client.QueryWorkspaceAsync(_options.WorkspaceId, aiQuery,
 				 new LogsQueryTimeRange(logTimePeriod.StartTime, logTimePeriod.EndTime.AddDays(1)));
 
-			var table = result.Value.Table;
-
-			// TODO Can do this a bit nicer
-			return table.Rows.Select(x => new LogEntry
-			{
-				RenderedMessage = x.GetString("Message"),
-				Level = (LogLevel)x.GetInt32("SeverityLevel"),
-				Timestamp = x.GetDateTimeOffset("TimeGenerated").GetValueOrDefault(),
-				Properties = Properties(x.GetString("Properties"))
-			});
-
-			static IReadOnlyDictionary<string, string?> Properties(string properties)
-			{
-				if (properties == null)
-				{
-					return new Dictionary<string, string?>();
-				}
-				return JsonSerializer.Deserialize<Dictionary<string, string?>>(properties);
-			}
-
-
+			return result.Value.Table;
 		}
+	}
 
+	public class RequestEntry
+	{
+		public string Id { get; set; } = "";
+		public DateTimeOffset TimeStamp { get; set; }
+		public string Name { get; set; } = "";
+		public string Url { get; set; } = "";
 
+		public bool Success { get; set; }
+		public string ResultCode { get; set; } = "";
+		public double Duration { get; set; }
+		public string PerformanceBucket { get; set; } = "";
+		public Dictionary<string, string?> Properties { get; set; } = new Dictionary<string, string?>();
+	}
+
+	public class ReportEntry
+	{
+		public string Url { get; set; } = "";
+		public double AverageDurationMs { get; set; }
+		public long Count { get; set; }
 	}
 }

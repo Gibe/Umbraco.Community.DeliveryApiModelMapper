@@ -1,9 +1,8 @@
-using Umbraco.Community.DeliveryApiModelMapper.Repository;
-using Umbraco.Community.DeliveryApiModelMapper.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Core.Services;
+using Umbraco.Community.DeliveryApiModelMapper.Repository;
+using Umbraco.Community.DeliveryApiModelMapper.Settings;
 using Umbraco.Extensions;
 
 namespace Umbraco.Community.DeliveryApiModelMapper.Composers
