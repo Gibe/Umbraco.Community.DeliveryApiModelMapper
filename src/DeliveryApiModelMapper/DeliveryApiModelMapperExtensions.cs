@@ -1,6 +1,6 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry;
+using NPoco.Expressions;
 using OpenTelemetry.Trace;
 
 namespace Umbraco.Community.DeliveryApiModelMapper
@@ -11,32 +11,11 @@ namespace Umbraco.Community.DeliveryApiModelMapper
 		{
 			services.ConfigureOpenTelemetryTracerProvider((x, builder) =>
 			{
-				builder.AddProcessor(new EnrichingActivityProcessor());
+				builder.AddProcessor(new EnrichingActivityProcessor(x.GetService<IHttpContextAccessor>()));
 			});
 
 
 			return services;
-		}
-	}
-
-	public class EnrichingActivityProcessor : BaseProcessor<Activity>
-	{
-		public override void OnEnd(Activity data)
-		{
-			if (data.Kind != ActivityKind.Server)
-			{
-				return;
-			}
-
-			var tags = data.Tags.ToDictionary(x => x.Key, x => x.Value);
-			var path = tags["url.path"];
-
-			if (!path.StartsWith("/umbraco/delivery/api/v2/", StringComparison.OrdinalIgnoreCase))
-			{
-				return;
-			}
-
-			data.AddTag("IsDeliveryApi", true);
 		}
 	}
 }

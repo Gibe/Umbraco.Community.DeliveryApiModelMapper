@@ -20,7 +20,7 @@ namespace DeliveryApiModelMapper.TestSite.Controllers
 
 			var period = new Umbraco.Cms.Core.Logging.Viewer.LogTimePeriod(start.Value, end.Value);
 
-			var logs = await _logViewerRepository.GetLogsAsync(period, "| where Properties['IsDeliveryApi'] == 'True'");
+			var logs = await _logViewerRepository.GetLogsAsync(period, "| where Properties['IsDeliveryApi'] == 'True' | order by TimeGenerated desc");
 
 			return Json(new
 			{

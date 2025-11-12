@@ -73,8 +73,21 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 			try
 			{
 
-				var filterExpression = " | where Properties['IsDeliveryApi'] == 'True' " 
-					+ " | summarize AverageDurationMs = avg(DurationMs), Count = count() by Url"
+				var filterExpression = " | where Properties['IsDeliveryApi'] == 'True' "
+					+ " | project"
+					+ "			DurationMs, "
+					+ "			Url, "
+					+ "			IsDeliveryApi = Properties['IsDeliveryApi'], "
+					+ "			DeliveryApiQueryType = Properties['DeliveryApiQueryType'], "
+					+ "			DeliveryApiStatus = Properties['DeliveryApiStatus'] "
+					+ " | summarize"
+					+ "			AverageDurationMs = avg(DurationMs), "
+					+ "			SuccessCount = countif(DeliveryApiStatus == 'success'), "
+					+ "			NotFoundCount = countif(DeliveryApiStatus == 'not-found'), "
+					+ "			ErrorCount = countif(DeliveryApiStatus == 'exception'), "
+					+ "			UnknownCount = countif(DeliveryApiStatus == 'unknown'), "
+					+ "			Count = count() "
+					+ "				by Url"
 					+ " | order by Count desc";
 
 				var table = await GetRemoteLogsAsync(logTimePeriod, filterExpression);
@@ -83,7 +96,11 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 				{
 					PathAndQuery = Url(row),
 					AverageDurationMs = row.GetDouble("AverageDurationMs") ?? -1,
-					Count = row.GetInt64("Count").GetValueOrDefault()
+					SuccessCount = row.GetInt64("SuccessCount").GetValueOrDefault(),
+					NotFoundCount = row.GetInt64("NotFoundCount").GetValueOrDefault(),
+					Count = row.GetInt64("Count").GetValueOrDefault(),
+					ErrorCount = row.GetInt64("ErrorCount").GetValueOrDefault(),
+					UnknownCount = row.GetInt64("UnknownCount").GetValueOrDefault()
 				}).ToList();
 
 
@@ -140,6 +157,10 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 	{
 		public string PathAndQuery { get; set; } = "";
 		public double AverageDurationMs { get; set; }
+		public long SuccessCount { get; set; }
+		public long NotFoundCount { get; set; }
+		public long ErrorCount { get; set; }
+		public long UnknownCount { get; set; }
 		public long Count { get; set; }
 	}
 }
