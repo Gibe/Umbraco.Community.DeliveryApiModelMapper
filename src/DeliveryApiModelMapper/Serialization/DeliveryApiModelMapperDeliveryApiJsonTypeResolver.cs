@@ -7,7 +7,7 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Serialization;
 
 public class DeliveryApiModelMapperDeliveryApiJsonTypeResolver : DeliveryApiJsonTypeResolver
 {
-	protected override Type[] GetDerivedTypes(JsonTypeInfo jsonTypeInfo)
+	public override Type[] GetDerivedTypes(JsonTypeInfo jsonTypeInfo)
 	{
 		if (jsonTypeInfo.Type == typeof(IApiContentResponse))
 		{

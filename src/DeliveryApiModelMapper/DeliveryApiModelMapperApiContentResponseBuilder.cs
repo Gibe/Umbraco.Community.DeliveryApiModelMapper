@@ -14,8 +14,9 @@ public class DeliveryApiModelMapperApiContentResponseBuilder : ApiContentRespons
 			IApiContentNameProvider apiContentNameProvider,
 			IApiContentRouteBuilder apiContentRouteBuilder,
 			IOutputExpansionStrategyAccessor outputExpansionStrategyAccessor,
-			IDeliveryApiModelMapperService modelMapperProvider)
-			: base(apiContentNameProvider, apiContentRouteBuilder, outputExpansionStrategyAccessor)
+			IDeliveryApiModelMapperService modelMapperProvider,
+			IVariationContextAccessor variationContextAccessor)
+			: base(apiContentNameProvider, apiContentRouteBuilder, outputExpansionStrategyAccessor, variationContextAccessor)
 	{
 		_modelMapperService = modelMapperProvider;
 	}

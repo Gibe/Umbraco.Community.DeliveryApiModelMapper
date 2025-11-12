@@ -12,7 +12,7 @@
     <PackageTags>umbraco;umbraco-marketplace</PackageTags>
     <RootNamespace>Umbraco.Community.DeliveryApiModelMapper</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>15.0.0</Version>
+    <Version>16.0.0</Version>
     <Authors>Tristan Thompson</Authors>
     <Copyright>$([System.DateTime]::UtcNow.ToString(`yyyy`)) © Tristan Thompson</Copyright>
     <PackageProjectUrl>https://github.com/Gibe/Umbraco.Community.DeliveryApiModelMapper</PackageProjectUrl>
@@ -24,9 +24,9 @@
 
   <ItemGroup>
     <!-- min 13.3.0 so that we can extend ApiContentResponseBuilder -->
-    <PackageReference Include="Umbraco.Cms.Core" Version="15.0.0" />
-    <PackageReference Include="Umbraco.Cms.Api.Common" Version="15.0.0" />
-    <PackageReference Include="Umbraco.Cms.Api.Delivery" Version="15.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="16.0.0" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="16.0.0" />
+    <PackageReference Include="Umbraco.Cms.Api.Delivery" Version="16.0.0" />
   </ItemGroup>
 
   <ItemGroup>
