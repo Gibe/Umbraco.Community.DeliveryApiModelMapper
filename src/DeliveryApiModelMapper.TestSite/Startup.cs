@@ -57,7 +57,6 @@ namespace DeliveryApiModelMapper.TestSite
 					})
 					.WithEndpoints(u =>
 					{
-						u.UseInstallerEndpoints();
 						u.UseBackOfficeEndpoints();
 						u.UseWebsiteEndpoints();
 					});
