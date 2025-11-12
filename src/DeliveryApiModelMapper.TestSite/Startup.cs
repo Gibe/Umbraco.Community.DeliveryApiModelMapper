@@ -1,3 +1,7 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
+using OpenTelemetry.Instrumentation.Http;
+using Umbraco.Community.DeliveryApiModelMapper;
+
 namespace DeliveryApiModelMapper.TestSite
 {
 	public class Startup
@@ -29,6 +33,14 @@ namespace DeliveryApiModelMapper.TestSite
 		/// </remarks>
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddDeliveryApiModelMapper();
+
+			// Call AddOpenTelemetry() to add OpenTelemetry to your ServiceCollection.
+			// Call UseAzureMonitor() to fully configure OpenTelemetry.
+			services
+				.AddOpenTelemetry()
+				.UseAzureMonitor();
+
 			services.AddUmbraco(_env, _config)
 					.AddBackOffice()
 					.AddWebsite()

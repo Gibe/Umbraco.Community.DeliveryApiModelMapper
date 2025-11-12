@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms" Version="16.0.0" />
+	  <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.3.0" />
+	  <PackageReference Include="Umbraco.Cms" Version="16.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,13 +25,14 @@
     <!-- Remove RazorCompileOnBuild and RazorCompileOnPublish when not using ModelsMode InMemoryAuto -->
     <RazorCompileOnBuild>false</RazorCompileOnBuild>
     <RazorCompileOnPublish>false</RazorCompileOnPublish>
+    <UserSecretsId>a3562f82-d2af-498f-ab2b-60ed330fd4bf</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DeliveryApiModelMapper\DeliveryApiModelMapper.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Models\ModelsBuilder\" />
-	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\ModelsBuilder\" />
+  </ItemGroup>
 </Project>

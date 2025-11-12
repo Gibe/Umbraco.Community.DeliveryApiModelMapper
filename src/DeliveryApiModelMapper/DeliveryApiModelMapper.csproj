@@ -23,17 +23,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- min 13.3.0 so that we can extend ApiContentResponseBuilder -->
+	<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.3.0" />
+
+	  <!-- min 13.3.0 so that we can extend ApiContentResponseBuilder -->
     <PackageReference Include="Umbraco.Cms.Core" Version="16.0.0" />
     <PackageReference Include="Umbraco.Cms.Api.Common" Version="16.0.0" />
     <PackageReference Include="Umbraco.Cms.Api.Delivery" Version="16.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\docs\README_nuget.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\docs\README_nuget.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>
