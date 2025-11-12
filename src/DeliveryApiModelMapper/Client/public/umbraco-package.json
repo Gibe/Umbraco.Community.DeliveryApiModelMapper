@@ -1,0 +1,14 @@
+{
+	"id": "DeliveryApiDashboard",
+	"name": "DeliveryApiDashboard",
+	"version": "0.0.0",
+	"allowPackageTelemetry": true,
+	"extensions": [
+		{
+			"name": "Delivery API Dashboard",
+			"alias": "DeliveryApiDashboard.Bundle",
+			"type": "bundle",
+			"js": "/App_Plugins/DeliveryApiDashboard/delivery-api-dashboard.js"
+		}
+	]
+}

@@ -22,7 +22,7 @@ namespace Umbraco.Community.DeliveryApiModelMapper
 			builder.Services
 					.AddControllers()
 					.AddJsonOptions(
-						Constants.JsonOptionsNames.DeliveryApi,
+						Cms.Core.Constants.JsonOptionsNames.DeliveryApi,
 						options => options
 							.JsonSerializerOptions
 							.TypeInfoResolver = new DeliveryApiModelMapperDeliveryApiJsonTypeResolver()
