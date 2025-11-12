@@ -8,6 +8,7 @@ using StackExchange.Profiling.Internal;
 using Umbraco.Cms.Core.Logging.Viewer;
 using Umbraco.Cms.Infrastructure.Logging.Serilog;
 using Umbraco.Community.DeliveryApiModelMapper.Settings;
+using static Umbraco.Cms.Core.Constants.Conventions;
 
 namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 {
@@ -78,11 +79,11 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 
 				var table = await GetRemoteLogsAsync(logTimePeriod, filterExpression);
 
-				return table.Rows.Select(x => new ReportEntry
+				return table.Rows.Select(row => new ReportEntry
 				{
-					Url = x.GetString("Url"),
-					AverageDurationMs = x.GetDouble("AverageDurationMs") ?? -1,
-					Count = x.GetInt64("Count").GetValueOrDefault()
+					PathAndQuery = Url(row),
+					AverageDurationMs = row.GetDouble("AverageDurationMs") ?? -1,
+					Count = row.GetInt64("Count").GetValueOrDefault()
 				}).ToList();
 
 
@@ -137,7 +138,7 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Repository
 
 	public class ReportEntry
 	{
-		public string Url { get; set; } = "";
+		public string PathAndQuery { get; set; } = "";
 		public double AverageDurationMs { get; set; }
 		public long Count { get; set; }
 	}
