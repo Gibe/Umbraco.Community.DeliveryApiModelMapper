@@ -98,7 +98,7 @@ Instead of this original Umbraco Delivery API response:
 
 ## Installation
 
-Add the package to an existing Umbraco website (v13+) from nuget:
+Add the package to an existing Umbraco website (v17+) from nuget:
 
 `dotnet add package Umbraco.Community.DeliveryApiModelMapper`
 
