@@ -4,7 +4,7 @@
 [![NuGet](https://img.shields.io/nuget/vpre/Umbraco.Community.DeliveryApiModelMapper?color=0273B3)](https://www.nuget.org/packages/Umbraco.Community.DeliveryApiModelMapper)
 [![GitHub license](https://img.shields.io/github/license/tristanjthompson/Umbraco.Community.DeliveryApiModelMapper?color=8AB803)](../LICENSE)
 
-This package allows you to create custom models which will get ouput in the Delivery API response as a custom `"model"` property.
+This package allows you to create custom models which will be output in the Delivery API response as a custom `"model"` property. The mapping is applied whenever a content item is returned by the Delivery API — whether you are fetching by route, by id, or via a content query.
 
 e.g.
 
@@ -74,7 +74,7 @@ Instead of this original Umbraco Delivery API response:
 		"metaDescription": "This is a lovely site, please rank it higher",
 		"metaImageUrl": "/media/skwjkrjb/enceladus_pia08409_full.jpg?width=1200",
 		"lastUpdated": "2025-10-05T09:55:35.0150656",
-		"url": "/",
+		"url": "/"
 	},
 	"cultures": {}
 }
@@ -91,7 +91,7 @@ Instead of this original Umbraco Delivery API response:
 		"metaDescription": "This is a lovely site, please rank it higher",
 		"metaImageUrl": "/media/skwjkrjb/enceladus_pia08409_full.jpg?width=1200",
 		"lastUpdated": "2025-10-05T09:55:35.0150656",
-		"url": "/",
+		"url": "/"
 	}
 }
 ```
@@ -106,7 +106,7 @@ Add the package to an existing Umbraco website (v13+) from nuget:
 ### Defining mappings
 You define a mapping by implementing the `IDeliveryApiModelMapper` interface. This can be found in the `Umbraco.Community.DeliveryApiModelMapper.Interfaces` namespace.  Multiple mappings can be defined.
 
-The `IDeliveryApiModelMapper` interface has two methods:
+The `IDeliveryApiModelMapper` interface has two mandatory methods to implement:
 1. `bool CanMapModel(IPublishedContent content, ...)` - this is used to say whether this mapper should be used for a particular piece of content.
 2. `object MapModel(IPublishedContent content, ...)` - this is where you create your custom mapping.
 
@@ -127,6 +127,32 @@ public class HomeModelMapper : IDeliveryApiModelMapper
 	}
 }
 ```
+
+### Adding your model to the OpenAPI Swagger spec (optional)
+
+If you would like your custom model to appear in the Delivery API's OpenAPI / Swagger schema — for example, to enable TypeScript type generation — you can implement the following method on your mapper and return the `Type` that you would like included in the OpenAPI Swagger spec:
+* `Type? SchemaModelType()`
+
+```csharp
+public class HomeModelMapper : IDeliveryApiModelMapper
+{
+	public Type? SchemaModelType() => typeof(HomeModel);
+
+	public bool CanMapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures)
+		=> content.ContentType.Alias == "homePage";
+
+	public object MapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures)
+	{
+		return new HomeModel
+		{
+			Title = content.Value<string>("contentTitle"),
+			Text = content.Value<string>("contentText")
+		};
+	}
+}
+```
+
+When the schema type is provided, the package registers a Swashbuckle document filter that adds the model (and any of its nested types) to `#/components/schemas` in the Delivery API spec at `/umbraco/swagger/delivery/swagger.json`. Mappers that do not override `SchemaModelType()` are unaffected.
 
 ### Registering mappings
 Once you've created your mappings, you need to register them in an `IComposer`.
@@ -163,6 +189,7 @@ For more details on model modes, see the [Model Modes documentation](./model-mod
 
 #### Choosing a ModelMode
 
+##### Default ModelMode
 A default "ModelMode" is set in the `appsettings.json`.  This will apply to all Delivery API requests that have a matching `IDeliveryApiModelMapper` interface implemented.
 
 ```json
@@ -177,7 +204,9 @@ A default "ModelMode" is set in the `appsettings.json`.  This will apply to all 
 }
 ```
 
-The default ModelMode can be overidden by adding a `?modelmode=[ModelMode]` querystring parameter to your Delivery API call.
+#### Overriding the default ModelMode
+
+The default ModelMode can be overridden by adding a `?modelmode=[ModelMode]` query string parameter to your Delivery API call.
 
 e.g. if you have configured the default ModelMode in your `appsettings.json` to `Everything` then...
 * ...a call to `/umbraco/delivery/api/v2/content/item` will return `Everything`
