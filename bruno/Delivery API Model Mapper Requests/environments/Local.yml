@@ -1,0 +1,6 @@
+name: Local
+variables:
+  - name: baseUrl
+    value: https://localhost:44336
+  - name: baseDeliveryApiUrl
+    value: "{{baseUrl}}/umbraco/delivery/api/v2/content/item/"

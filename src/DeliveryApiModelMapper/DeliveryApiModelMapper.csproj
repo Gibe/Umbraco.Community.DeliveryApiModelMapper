@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <StaticWebAssetBasePath>App_Plugins</StaticWebAssetBasePath>
@@ -12,7 +12,7 @@
     <PackageTags>umbraco;umbraco-marketplace</PackageTags>
     <RootNamespace>Umbraco.Community.DeliveryApiModelMapper</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>16.0.0</Version>
+    <Version>17.0.0</Version>
     <Authors>Tristan Thompson</Authors>
     <Copyright>$([System.DateTime]::UtcNow.ToString(`yyyy`)) © Tristan Thompson</Copyright>
     <PackageProjectUrl>https://github.com/Gibe/Umbraco.Community.DeliveryApiModelMapper</PackageProjectUrl>
@@ -23,10 +23,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- min 13.3.0 so that we can extend ApiContentResponseBuilder -->
-    <PackageReference Include="Umbraco.Cms.Core" Version="16.0.0" />
-    <PackageReference Include="Umbraco.Cms.Api.Common" Version="16.0.0" />
-    <PackageReference Include="Umbraco.Cms.Api.Delivery" Version="16.0.0" />
+    <!-- min 17.0.0 so that we can extend ApiContentResponseBuilder -->
+    <PackageReference Include="Umbraco.Cms.Core" Version="17.0.0" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="17.0.0" />
+    <PackageReference Include="Umbraco.Cms.Api.Delivery" Version="17.0.0" />
   </ItemGroup>
 
   <ItemGroup>
