@@ -15,7 +15,7 @@ This is a local test Umbraco site that references the DeliveryApiModelMapper and
 * /bruno - contains some sample API calls for use with Bruno in order for developers to test the Delivery API easily using the TestSite.
 
 ## Technology Stack
-- **.NET Framework**: .NET 10.0
+- **.NET Version**: .NET 10.0
 - **Core Dependencies**: 
   - Umbraco.Cms.Core v17.0.0+
   - Umbraco.Cms.Api.Delivery v17.0.0+
