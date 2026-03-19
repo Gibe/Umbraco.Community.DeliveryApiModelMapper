@@ -1,7 +1,5 @@
 using DeliveryApiModelMapper.TestSite.Models.ModelsBuilder;
 using DeliveryApiModelMapper.TestSite.Services;
-using Json.Patch;
-using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.DeliveryApi;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Community.DeliveryApiModelMapper.Interfaces;

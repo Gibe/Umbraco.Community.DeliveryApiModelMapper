@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Umbraco.Cms.Api.Common.DependencyInjection;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
@@ -11,6 +12,7 @@ using Umbraco.Community.DeliveryApiModelMapper.Serialization;
 using Umbraco.Community.DeliveryApiModelMapper.Services;
 
 namespace Umbraco.Community.DeliveryApiModelMapper;
+
 internal class Composer : IComposer
 {
 	public void Compose(IUmbracoBuilder builder)
@@ -32,7 +34,7 @@ internal class Composer : IComposer
 				.BindConfiguration("Umbraco:CMS:DeliveryApiModelMapper")
 				.ValidateOnStart();
 
-		builder.Services.AddSwaggerGen(options =>
+		builder.Services.Configure<SwaggerGenOptions>(options =>
 				options.DocumentFilter<DeliveryApiModelMapperDocumentFilter>());
 	}
 }

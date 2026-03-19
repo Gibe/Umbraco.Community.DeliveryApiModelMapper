@@ -11,7 +11,7 @@ This is the package code - it is what gets shipped when published on nuget.  The
 This is a local test Umbraco site that references the DeliveryApiModelMapper and is used purely for testing the DeliveryApiModelMapper by the developer, allowing them to spin the site up and interact with it directly.
 
 ## Folder structure
-* /docs - this contains markdown files with documentations for users on how to use the package.
+* /docs - this contains markdown files with documentation for users on how to use the package.
 * /bruno - contains some sample API calls for use with Bruno in order for developers to test the Delivery API easily using the TestSite.
 
 ## Technology Stack
