@@ -6,31 +6,33 @@ using Umbraco.Cms.Core.DeliveryApi;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Community.DeliveryApiModelMapper.Interfaces;
 using Umbraco.Community.DeliveryApiModelMapper.Models;
+using Umbraco.Community.DeliveryApiModelMapper.OpenApi;
 using Umbraco.Community.DeliveryApiModelMapper.Serialization;
 using Umbraco.Community.DeliveryApiModelMapper.Services;
 
-namespace Umbraco.Community.DeliveryApiModelMapper
+namespace Umbraco.Community.DeliveryApiModelMapper;
+internal class Composer : IComposer
 {
-	internal class Composer : IComposer
+	public void Compose(IUmbracoBuilder builder)
 	{
-		public void Compose(IUmbracoBuilder builder)
-		{
-			builder.Services.AddScoped<IDeliveryApiModelMapperService, DeliveryApiModelMapperService>();
+		builder.Services.AddScoped<IDeliveryApiModelMapperService, DeliveryApiModelMapperService>();
 
-			builder.Services.AddScoped<IApiContentResponseBuilder, DeliveryApiModelMapperApiContentResponseBuilder>();
+		builder.Services.AddScoped<IApiContentResponseBuilder, DeliveryApiModelMapperApiContentResponseBuilder>();
 
-			builder.Services
-					.AddControllers()
-					.AddJsonOptions(
-						Constants.JsonOptionsNames.DeliveryApi,
-						options => options
-							.JsonSerializerOptions
-							.TypeInfoResolver = new DeliveryApiModelMapperDeliveryApiJsonTypeResolver()
-					);
+		builder.Services
+						.AddControllers()
+						.AddJsonOptions(
+								Constants.JsonOptionsNames.DeliveryApi,
+								options => options
+										.JsonSerializerOptions
+										.TypeInfoResolver = new DeliveryApiModelMapperDeliveryApiJsonTypeResolver()
+						);
 
-			builder.Services.AddOptions<DeliveryApiModelMapperSettings>()
+		builder.Services.AddOptions<DeliveryApiModelMapperSettings>()
 				.BindConfiguration("Umbraco:CMS:DeliveryApiModelMapper")
 				.ValidateOnStart();
-		}
+
+		builder.Services.AddSwaggerGen(options =>
+				options.DocumentFilter<DeliveryApiModelMapperDocumentFilter>());
 	}
 }

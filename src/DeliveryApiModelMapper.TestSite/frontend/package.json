@@ -1,0 +1,11 @@
+{
+  "name": "delivery-api-model-mapper-test-site",
+  "private": true,
+  "scripts": {
+    "generate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 openapi-typescript https://localhost:44336/umbraco/swagger/delivery/swagger.json -o ./types/delivery-api.d.ts"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "openapi-typescript": "^7.0.0"
+  }
+}
