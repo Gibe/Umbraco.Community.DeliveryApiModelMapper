@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Umbraco.Community.DeliveryApiModelMapper.Interfaces;
@@ -27,9 +26,14 @@ internal class DeliveryApiModelMapperDocumentFilter : IDocumentFilter
 		using var scope = _serviceScopeFactory.CreateScope();
 		var mappers = scope.ServiceProvider.GetServices<IDeliveryApiModelMapper>();
 
-		foreach (var mapper in mappers.Where(m => m.SchemaModelType() != default))
+		foreach (var mapper in mappers)
 		{
-			context.SchemaGenerator.GenerateSchema(mapper.SchemaModelType(), context.SchemaRepository);
+			var schemaModelType = mapper.SchemaModelType();
+
+			if (schemaModelType is not null)
+			{
+				context.SchemaGenerator.GenerateSchema(schemaModelType, context.SchemaRepository);
+			}
 		}
 	}
 }
