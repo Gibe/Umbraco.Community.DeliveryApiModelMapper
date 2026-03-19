@@ -6,31 +6,32 @@ using Umbraco.Community.DeliveryApiModelMapper.Interfaces;
 
 namespace DeliveryApiModelMapper.TestSite.Models.DeliveryApi.ModelMappers;
 
-public class HomeModelMapper : IDeliveryApiModelMapper
+public class PageModelMapper : IDeliveryApiModelMapper
 {
-	public Type SchemaModelType() => typeof(HomeModel);
+	public Type SchemaModelType() => typeof(PageModel);
 
 	private readonly IDeliveryApiModelFactory _deliveryApiModelFactory;
 
-	public HomeModelMapper(IDeliveryApiModelFactory deliveryApiModelFactory)
+	public PageModelMapper(IDeliveryApiModelFactory deliveryApiModelFactory)
 	{
 		_deliveryApiModelFactory = deliveryApiModelFactory;
 	}
 
 	public bool CanMapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures)
-		=> content is Home;
+		=> content is Page;
 
 	public object MapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures)
 	{
-		var home = _deliveryApiModelFactory.Create<HomeModel>(content);
+		var page = _deliveryApiModelFactory.Create<PageModel>(content);
 
-		var homeContent = content as Home;
-		if (homeContent != null)
+		var pageModel = content as Page;
+		if (pageModel != null)
 		{
-			home.Title = homeContent.Title ?? "";
-			home.Text = homeContent.Text?.ToString() ?? "";
+			page.Title = pageModel.Title ?? "";
+			page.Text = pageModel.Text?.ToString() ?? "";
+			page.Link = _deliveryApiModelFactory.Map(pageModel.Links?.FirstOrDefault());
 		}
 
-		return home;
+		return page;
 	}
 }

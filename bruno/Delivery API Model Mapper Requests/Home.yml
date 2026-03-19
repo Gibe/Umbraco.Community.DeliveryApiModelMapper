@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseDeliveryApiUrl}}"
+  url: "{{baseDeliveryApiUrl}}item"
   auth: inherit
 
 settings:

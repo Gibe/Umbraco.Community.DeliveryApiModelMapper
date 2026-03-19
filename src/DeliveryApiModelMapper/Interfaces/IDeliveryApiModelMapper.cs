@@ -5,6 +5,7 @@ namespace Umbraco.Community.DeliveryApiModelMapper.Interfaces;
 
 public interface IDeliveryApiModelMapper
 {
-    bool CanMapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures);
-    object MapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures);
+	Type? SchemaModelType() => default;
+	bool CanMapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures);
+	object MapModel(IPublishedContent content, string name, IApiContentRoute route, IDictionary<string, IApiContentRoute> cultures);
 }
