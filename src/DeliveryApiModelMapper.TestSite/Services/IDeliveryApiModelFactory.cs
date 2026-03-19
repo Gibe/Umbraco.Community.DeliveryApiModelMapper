@@ -1,12 +1,10 @@
-﻿using DeliveryApiModelMapper.TestSite.Models.DeliveryApi;
-using Umbraco.Cms.Core.Models;
+using DeliveryApiModelMapper.TestSite.Models.DeliveryApi;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace DeliveryApiModelMapper.TestSite.Services
+namespace DeliveryApiModelMapper.TestSite.Services;
+
+public interface IDeliveryApiModelFactory
 {
-	public interface IDeliveryApiModelFactory
-	{
-		TModel Create<TModel>(IPublishedContent content) where TModel : BaseModel, new();
-		FooterLink Map(Link link);
-	}
+	TModel Create<TModel>(IPublishedContent content) where TModel : BaseModel, new();
+	Models.DeliveryApi.ContentLink Map(Umbraco.Cms.Core.Models.Link? link);
 }
