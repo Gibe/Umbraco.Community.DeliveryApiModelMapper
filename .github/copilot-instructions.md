@@ -48,3 +48,15 @@ For detailed examples and use cases, see [model-modes.md](../docs/model-modes.md
 For developer guidance on creating models and mappers, see:
 - [model-modes.md](../docs/model-modes.md) — Explains the four response modes with examples
 - [README_nuget.md](../docs/README_nuget.md) — Package overview and getting-started guide
+
+## External Documentation
+Developers working with this package should be familiar with the Umbraco Content Delivery API and its extension points:
+
+- **[Content Delivery API](https://docs.umbraco.com/umbraco-cms/reference/content-delivery-api)** — Overview of the Delivery API, endpoints, query parameters, and core concepts
+- **[Custom Property Editors Support](https://docs.umbraco.com/umbraco-cms/reference/content-delivery-api/custom-property-editors-support)** — How to customize property editor output in the Delivery API by implementing `IDeliveryApiPropertyValueConverter`
+- **[Extension API for Querying](https://docs.umbraco.com/umbraco-cms/reference/content-delivery-api/extension-api-for-querying)** — How to extend the API with custom selecting, filtering, and sorting via `ISelectorHandler`, `IFilterHandler`, and `ISortHandler`
+
+## Swagger / Open API
+When the test site is running, the Content Delivery API has swagger documentation available at the following paths:
+* Human readable Swagger docs: /umbraco/swagger/index.html?urls.primaryName=Umbraco+Delivery+API
+* Machine readable API Open API spec: /umbraco/swagger/delivery/swagger.json
