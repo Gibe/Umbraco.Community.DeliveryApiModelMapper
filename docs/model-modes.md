@@ -91,7 +91,7 @@ e.g.
 		"metaDescription": "This is a lovely site, please rank it higher",
 		"metaImageUrl": "/media/skwjkrjb/enceladus_pia08409_full.jpg?width=1200",
 		"lastUpdated": "2025-10-05T09:55:35.0150656",
-		"url": "/",
+		"url": "/"
 	},
 	"cultures": {}
 }
@@ -157,7 +157,7 @@ e.g.
 				"bytes": 665148,
 				"properties": {}
 			}
-		],
+		]
 	},
 	"cultures": {}
 }

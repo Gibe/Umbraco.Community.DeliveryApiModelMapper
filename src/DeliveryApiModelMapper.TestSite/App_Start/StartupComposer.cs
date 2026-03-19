@@ -17,6 +17,7 @@ namespace DeliveryApiModelMapper.TestSite.App_Start
 		private void ComposeDeliveryApiModelMappers(IUmbracoBuilder builder)
 		{
 			builder.Services.AddScoped<IDeliveryApiModelMapper, HomeModelMapper>();
+			builder.Services.AddScoped<IDeliveryApiModelMapper, PageModelMapper>();
 		}
 	}
 }
