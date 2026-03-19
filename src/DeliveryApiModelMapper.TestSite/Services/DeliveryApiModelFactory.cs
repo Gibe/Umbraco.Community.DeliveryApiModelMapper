@@ -27,9 +27,19 @@ public class DeliveryApiModelFactory : IDeliveryApiModelFactory
 		return model;
 	}
 
-	public FooterLink Map(global::Umbraco.Cms.Core.Models.Link link)
+	public ContentLink Map(global::Umbraco.Cms.Core.Models.Link? link)
 	{
-		return new FooterLink
+		if (link == null)
+		{
+			return new ContentLink
+			{
+				Target = "",
+				Title = "",
+				Url = ""
+			};
+		}
+
+		return new ContentLink
 		{
 			Target = link.Target ?? "",
 			Title = link.Name ?? "",

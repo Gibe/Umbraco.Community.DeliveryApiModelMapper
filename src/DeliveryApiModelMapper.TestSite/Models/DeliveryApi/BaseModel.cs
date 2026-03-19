@@ -6,10 +6,10 @@ public class BaseModel
 	public string MetaDescription { get; set; } = "";
 	public string MetaImageUrl { get; set; } = "";
 
-	public ICollection<FooterLink> FooterLinks { get; set; } = new List<FooterLink>();
+	public ICollection<ContentLink> FooterLinks { get; set; } = new List<ContentLink>();
 }
 
-public class FooterLink
+public class ContentLink
 {
 	public string Title { get; set; } = "";
 	public string Url { get; set; } = "";
